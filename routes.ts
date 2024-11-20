@@ -12,15 +12,15 @@ export const publicRoutes = [
  * @type {string[]}
  */
 export const authRoutes = [
-  "/login",
-  "/register"
+  "/signin",
+  "/signup"
 ];
 /**
  * The prefix for API authentication routes
  * Routes that start withg this prefix are used for authentication purposes
  * @type {string}
  */
-export const apiAuthPrefix = "/api"
+export const apiAuthPrefix = "/api/auth"
 /**
  * Thedefault redirect path after logging in
  * @type {string}

@@ -38,15 +38,18 @@ const SigninPage = () => {
 
   //on submit function
   const onSubmit = (values: zod.infer<typeof LoginSchema>) => {
+    
 
     //clear error and success
     setError("");
     setSuccess("");
 
     startTransition(() => {
+     
       //use login server action
       login(values)
       .then((data) => {
+        console.log(data);
         setError(data.error);
         setSuccess(data.success);
       });
