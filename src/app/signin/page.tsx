@@ -21,11 +21,13 @@ import { Button } from "@/components/ui/button";
 import { FormError } from "@/components/form-error";
 import { FormSuccess } from "@/components/form-success";
 import { login } from "actions/login";
+import { signIn } from "next-auth/react";
+import { DEFAULT_LOGIN_REDIRECT } from "routes";
 
 
 const SigninPage = () => {
-  const [error, setError ] = useState<string | undefined>("");
-  const [success, setSuccess ] = useState<string | undefined>("");
+  const [error, setError] = useState<string | undefined>("");
+  const [success, setSuccess] = useState<string | undefined>("");
   const [isPending, startTransition] = useTransition();
   // define form
   const form = useForm<zod.infer<typeof LoginSchema>>({
@@ -38,23 +40,26 @@ const SigninPage = () => {
 
   //on submit function
   const onSubmit = (values: zod.infer<typeof LoginSchema>) => {
-    
-
     //clear error and success
     setError("");
     setSuccess("");
 
     startTransition(() => {
-     
       //use login server action
       login(values)
-      .then((data) => {
-        console.log(data);
-        setError(data.error);
-        setSuccess(data.success);
-      });
+        .then((data) => {
+          console.log(data);
+          setError(data.error);
+          setSuccess(data.success);
+        });
     });
+  }
 
+  //method that handles onclick event on social logins
+  const onClick = (provider: "google" | "github") => {
+    signIn(provider, {
+      callbackUrl: DEFAULT_LOGIN_REDIRECT,
+    });
   }
 
   return (
@@ -70,7 +75,8 @@ const SigninPage = () => {
                 <p className="mb-11 text-center text-base font-medium text-body-color">
                   Login to your account.
                 </p>
-                <button className="border-stroke dark:text-body-color-dark dark:shadow-two mb-6 flex w-full items-center justify-center rounded-sm border bg-[#f8f8f8] px-6 py-3 text-base text-body-color outline-none transition-all duration-300 hover:border-primary hover:bg-primary/5 hover:text-primary dark:border-transparent dark:bg-[#2C303B] dark:hover:border-primary dark:hover:bg-primary/5 dark:hover:text-primary dark:hover:shadow-none">
+                <Button className="border-stroke dark:text-body-color-dark dark:shadow-two mb-6 flex w-full items-center justify-center rounded-sm border bg-[#f8f8f8] px-6 py-3 text-base text-body-color outline-none transition-all duration-300 hover:border-primary hover:bg-primary/5 hover:text-primary dark:border-transparent dark:bg-[#2C303B] dark:hover:border-primary dark:hover:bg-primary/5 dark:hover:text-primary dark:hover:shadow-none"
+                  onClick={() => onClick("google")}>
                   <span className="mr-3">
                     <svg
                       width="20"
@@ -105,9 +111,10 @@ const SigninPage = () => {
                     </svg>
                   </span>
                   Sign in with Google
-                </button>
+                </Button>
 
-                <button className="border-stroke dark:text-body-color-dark dark:shadow-two mb-6 flex w-full items-center justify-center rounded-sm border bg-[#f8f8f8] px-6 py-3 text-base text-body-color outline-none transition-all duration-300 hover:border-primary hover:bg-primary/5 hover:text-primary dark:border-transparent dark:bg-[#2C303B] dark:hover:border-primary dark:hover:bg-primary/5 dark:hover:text-primary dark:hover:shadow-none">
+                <Button className="border-stroke dark:text-body-color-dark dark:shadow-two mb-6 flex w-full items-center justify-center rounded-sm border bg-[#f8f8f8] px-6 py-3 text-base text-body-color outline-none transition-all duration-300 hover:border-primary hover:bg-primary/5 hover:text-primary dark:border-transparent dark:bg-[#2C303B] dark:hover:border-primary dark:hover:bg-primary/5 dark:hover:text-primary dark:hover:shadow-none"
+                onClick={() => onClick("github")}>
                   <span className="mr-3">
                     <svg
                       fill="currentColor"
@@ -120,7 +127,7 @@ const SigninPage = () => {
                     </svg>
                   </span>
                   Sign in with Github
-                </button>
+                </Button>
                 <div className="mb-8 flex items-center justify-center">
                   <span className="hidden h-[1px] w-full max-w-[70px] bg-body-color/50 sm:block"></span>
                   <p className="w-full px-5 text-center text-base font-medium text-body-color">
@@ -174,7 +181,7 @@ const SigninPage = () => {
                         )}
                       />
                       <FormError message={error} />
-                      <FormSuccess message={success}/>
+                      <FormSuccess message={success} />
 
                       <div className=" space-y-6 flex flex-col justify-between sm:flex-row sm:items-center">
                         <div className="mb-4 sm:mb-0">
