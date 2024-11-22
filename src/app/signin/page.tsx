@@ -56,8 +56,9 @@ const SigninPage = () => {
       login(values)
         .then((data) => {
           console.log(data);
-          setError(data.error);
-          setSuccess(data.success);
+          setError(data?.error);
+          //TODO: Add when we add 2FA
+          //setSuccess(data?.success);
         });
     });
   }
@@ -188,7 +189,7 @@ const SigninPage = () => {
                         )}
                       />
                       <FormError message={error || urlError} />
-                      
+
                       <FormSuccess message={success} />
 
                       <div className=" space-y-6 flex flex-col justify-between sm:flex-row sm:items-center">
