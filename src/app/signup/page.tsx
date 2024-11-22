@@ -22,6 +22,8 @@ import { Button } from "@/components/ui/button";
 import { FormError } from "@/components/form-error";
 import { FormSuccess } from "@/components/form-success";
 import { register } from "actions/register";
+import { DEFAULT_LOGIN_REDIRECT } from "routes";
+import { signIn } from "next-auth/react";
 
 const SignupPage = () => {
   const [error, setError] = useState<string | undefined>("");
@@ -36,6 +38,12 @@ const SignupPage = () => {
       password: "",
     }
   });
+ //method that handles onclick event on social logins
+ const onClick = (provider: "google" | "github") => {
+  signIn(provider, {
+    callbackUrl: DEFAULT_LOGIN_REDIRECT,
+  });
+}
 
   
   //on submit function
@@ -69,7 +77,8 @@ const SignupPage = () => {
                 <p className="mb-11 text-center text-base font-medium text-body-color">
                   It’s totally free and super easy
                 </p>
-                <button className="border-stroke dark:text-body-color-dark dark:shadow-two mb-6 flex w-full items-center justify-center rounded-sm border bg-[#f8f8f8] px-6 py-3 text-base text-body-color outline-none transition-all duration-300 hover:border-primary hover:bg-primary/5 hover:text-primary dark:border-transparent dark:bg-[#2C303B] dark:hover:border-primary dark:hover:bg-primary/5 dark:hover:text-primary dark:hover:shadow-none">
+                <Button className="border-stroke dark:text-body-color-dark dark:shadow-two mb-6 flex w-full items-center justify-center rounded-sm border bg-[#f8f8f8] px-6 py-3 text-base text-body-color outline-none transition-all duration-300 hover:border-primary hover:bg-primary/5 hover:text-primary dark:border-transparent dark:bg-[#2C303B] dark:hover:border-primary dark:hover:bg-primary/5 dark:hover:text-primary dark:hover:shadow-none"
+                 onClick={() => onClick("google")}>
                   <span className="mr-3">
                     <svg
                       width="20"
@@ -104,9 +113,10 @@ const SignupPage = () => {
                     </svg>
                   </span>
                   Sign in with Google
-                </button>
+                </Button>
 
-                <button className="border-stroke dark:text-body-color-dark dark:shadow-two mb-6 flex w-full items-center justify-center rounded-sm border bg-[#f8f8f8] px-6 py-3 text-base text-body-color outline-none transition-all duration-300 hover:border-primary hover:bg-primary/5 hover:text-primary dark:border-transparent dark:bg-[#2C303B] dark:hover:border-primary dark:hover:bg-primary/5 dark:hover:text-primary dark:hover:shadow-none">
+                <Button className="border-stroke dark:text-body-color-dark dark:shadow-two mb-6 flex w-full items-center justify-center rounded-sm border bg-[#f8f8f8] px-6 py-3 text-base text-body-color outline-none transition-all duration-300 hover:border-primary hover:bg-primary/5 hover:text-primary dark:border-transparent dark:bg-[#2C303B] dark:hover:border-primary dark:hover:bg-primary/5 dark:hover:text-primary dark:hover:shadow-none"
+                 onClick={() => onClick("github")}>
                   <span className="mr-3">
                     <svg
                       fill="currentColor"
@@ -119,7 +129,7 @@ const SignupPage = () => {
                     </svg>
                   </span>
                   Sign in with Github
-                </button>
+                </Button>
                 <div className="mb-8 flex items-center justify-center">
                   <span className="hidden h-[1px] w-full max-w-[60px] bg-body-color/50 sm:block"></span>
                   <p className="w-full px-5 text-center text-base font-medium text-body-color">

@@ -6,6 +6,7 @@ import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { LoginSchema } from "@/../schemas"
+import { useSearchParams } from "next/navigation";
 
 import {
   Form,
@@ -26,6 +27,12 @@ import { DEFAULT_LOGIN_REDIRECT } from "routes";
 
 
 const SigninPage = () => {
+  //get search params
+  const searchParams = useSearchParams();
+  const urlError = searchParams.get("error") === "OAuthAccountNotLinked"
+    ? "Email already in use with different provider!"
+    : "";
+
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
   const [isPending, startTransition] = useTransition();
@@ -114,7 +121,7 @@ const SigninPage = () => {
                 </Button>
 
                 <Button className="border-stroke dark:text-body-color-dark dark:shadow-two mb-6 flex w-full items-center justify-center rounded-sm border bg-[#f8f8f8] px-6 py-3 text-base text-body-color outline-none transition-all duration-300 hover:border-primary hover:bg-primary/5 hover:text-primary dark:border-transparent dark:bg-[#2C303B] dark:hover:border-primary dark:hover:bg-primary/5 dark:hover:text-primary dark:hover:shadow-none"
-                onClick={() => onClick("github")}>
+                  onClick={() => onClick("github")}>
                   <span className="mr-3">
                     <svg
                       fill="currentColor"
@@ -180,7 +187,7 @@ const SigninPage = () => {
                           </FormItem>
                         )}
                       />
-                      <FormError message={error} />
+                      <FormError message={error || urlError} />
                       <FormSuccess message={success} />
 
                       <div className=" space-y-6 flex flex-col justify-between sm:flex-row sm:items-center">

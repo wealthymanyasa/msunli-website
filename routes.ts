@@ -13,7 +13,8 @@ export const publicRoutes = [
  */
 export const authRoutes = [
   "/signin",
-  "/signup"
+  "/signup",
+  "/signup-error"
 ];
 /**
  * The prefix for API authentication routes
