@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { auth, signOut } from "auth"
+import { auth, signOut } from "@/auth"
 
 const SettingsPage = async () => {
 
@@ -7,6 +7,7 @@ const SettingsPage = async () => {
   return (
     <div className="flex items-center justify-center h-screen px-8">
       {JSON.stringify(session)}
+      {session.user.role}
       <form action={ async () =>{
         "use server"
 

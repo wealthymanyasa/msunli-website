@@ -1,13 +1,29 @@
 import NextAuth from "next-auth"
 import { PrismaAdapter } from "@auth/prisma-adapter"
-import authConfig from "auth.config"
+import authConfig from "@/auth.config"
 import { db } from "lib/db"
 import { getUserById } from "data/user"
+import { UserRole } from "@prisma/client"
 
 export const {
     auth, handlers, signIn, signOut
 } = NextAuth({
     callbacks: {
+        // //sign in callback
+        // async signIn({ user }) {
+        //     //get existing user
+        //     const existingUser = await getUserById(user.id);
+        //     //check if existing user exist and is verified
+        //     if (!existingUser || !existingUser.emailVerified) {
+        //         //if existing user does not exist and is not verified return false
+        //         return false;
+        //     }
+
+        //     //finally  return true
+        //     return true;
+        // },
+
+        //session callback
         async session({ token, session }) {
             console.log({
                 sessionToken: token,
@@ -17,20 +33,28 @@ export const {
             if (token.sub && session.user) {
                 session.user.id = token.sub;
             }
+            //set user role to the custom value thus extend the role
+            if (token.role && session.user) {
+                session.user.role = token.role as UserRole;
+            }
+            //finally return session
             return session;
         },
         //extract token
         async jwt({ token }) {
+            //return token if token sub or id is null
+            if (!token.sub) return token;
             //get existing user
             const existingUser = await getUserById(token.sub);
             ///return user if there is no existing user
             if (!existingUser) return token;
             //assign token role to the existing user
             token.role = existingUser.role;
-
+            //finally return token
             return token;
         }
     },
+
     adapter: PrismaAdapter(db),
     session: { strategy: "jwt" },
     ...authConfig
