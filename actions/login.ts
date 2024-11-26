@@ -5,6 +5,8 @@ import { AuthError } from "next-auth";
 import { DEFAULT_LOGIN_REDIRECT } from "routes";
 import { LoginSchema } from "schemas";
 import * as zod from "zod";
+import { generateVerificationToken } from "@/lib/tokens";
+import { getUserByEmail } from "data/user";
 
 export const login = async (values: zod.infer<typeof LoginSchema>) => {
    const validatedFields = LoginSchema.safeParse(values);
@@ -13,22 +15,42 @@ export const login = async (values: zod.infer<typeof LoginSchema>) => {
       return { error: "Invalid Fields" };
    }
    const { email, password } = validatedFields.data;
-   //try to sign in
-   try {
-      await signIn("credentials", {
-         email,
-         password,
-         redirectTo: DEFAULT_LOGIN_REDIRECT
-      })
-   } catch (error) {
-      if (error instanceof AuthError) {
-         switch (error.type) {
-            case "CredentialsSignin":
-               return { error: "Invalid Credentials" }
-            default:
-               return { error: "Something went wrong" }
-         }
+
+   const existingUser = await getUserByEmail(email)
+
+   if (!existingUser || !existingUser.email || !existingUser.password) {
+      return {
+         error: "Email does not exist!"
       }
-      throw error;
    }
+
+   //if existing user is not verified generate token
+   if (!existingUser.emailVerified){
+      const verificationToken = await generateVerificationToken(
+         existingUser.email
+      );
+
+      return {
+         success: "Confirmation email sent"
+      }
+   }
+
+      //try to sign in
+      try {
+         await signIn("credentials", {
+            email,
+            password,
+            redirectTo: DEFAULT_LOGIN_REDIRECT
+         })
+      } catch (error) {
+         if (error instanceof AuthError) {
+            switch (error.type) {
+               case "CredentialsSignin":
+                  return { error: "Invalid Credentials" }
+               default:
+                  return { error: "Something went wrong" }
+            }
+         }
+         throw error;
+      }
 };

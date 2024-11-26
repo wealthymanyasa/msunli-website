@@ -13,7 +13,7 @@ export const generateVerificationToken = async (email: string) => {
     const expires = new Date(new Date().getTime() + 3600 * 1000);
 
     const existingToken = await getVerificationTokenByEmail(email);
-    //check db for verification token
+    //check db for verification token and delete
     if (existingToken) {
         await db.verificationToken.delete({
             where: {
@@ -22,7 +22,7 @@ export const generateVerificationToken = async (email: string) => {
         });
     }
 
-    // generate verificationToken
+    // generate new verificationToken
     const verificationToken = await db.verificationToken.create({
         data: {
             email,
@@ -33,4 +33,4 @@ export const generateVerificationToken = async (email: string) => {
 
     return verificationToken;
 
-}
+};

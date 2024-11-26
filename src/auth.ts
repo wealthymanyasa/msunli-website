@@ -9,9 +9,9 @@ export const {
     auth, handlers, signIn, signOut
 } = NextAuth({
     //nectauth pages
-    pages:{
-      signIn: '/signin',
-      error: '/signup-error'
+    pages: {
+        signIn: '/signin',
+        error: '/signup-error'
     },
     //next auth events
     events: {
@@ -25,19 +25,21 @@ export const {
     },
     //next auth callbacks
     callbacks: {
-        // //sign in callback
-        // async signIn({ user }) {
-        //     //get existing user
-        //     const existingUser = await getUserById(user.id);
-        //     //check if existing user exist and is verified
-        //     if (!existingUser || !existingUser.emailVerified) {
-        //         //if existing user does not exist and is not verified return false
-        //         return false;
-        //     }
+        //sign in callback
+        async signIn({ user, account }) {
+            // allow OAuth witout amail verification
+            if (account?.provider !== "credentials") return true;
+            //get existing user
+            const existingUser = await getUserById(user.id);
+            //prevent sign in without email verification
+            if (!existingUser.emailVerified) { return false; }
 
-        //     //finally  return true
-        //     return true;
-        // },
+            //TODO: Add 2FA check
+
+
+            //finally  return true
+            return true;
+        },
 
         //session callback
         async session({ token, session }) {
